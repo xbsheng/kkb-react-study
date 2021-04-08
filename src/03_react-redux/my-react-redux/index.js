@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useReducer } from 'react'
+import React, { useContext, useReducer, useLayoutEffect } from 'react'
 
 const bindActionCreator = (creator, dispatch) => (...args) => dispatch(creator(...args))
 
@@ -11,18 +11,30 @@ export const bindActionCreators = (creators, dispatch) => {
     return result
   }, {})
 }
-
-const Context = React.createContext()
+// react-redux
+export const Context = React.createContext()
 export const Provider = props => {
   const { store, children } = props
-  return <Context.Provider value={store}>{children}</Context.Provider>
+  return <Context.Provider value={{ store }}>{children}</Context.Provider>
 }
 
+export const useStore = () => useContext(Context).store
+
 export const connect = (mapStateToProps, mapDispatchToProps) => Comp => props => {
-  const { getState, dispatch, subscribe } = useContext(Context)
+  console.log(useContext(Context))
+  const { getState, dispatch, subscribe } = useStore()
   const stateProps = mapStateToProps(getState())
   const dispatchProps = mapDispatchToProps(dispatch)
   const [, forceUpdate] = useReducer(x => x + 1, 0)
-  useEffect(() => subscribe(forceUpdate), [subscribe])
+  useLayoutEffect(() => subscribe(forceUpdate), [subscribe])
   return <Comp {...props} {...stateProps} {...dispatchProps} zxc="zxc" />
 }
+
+export const useSelector = cb => {
+  const { getState, subscribe } = useStore()
+  const [, forceUpdate] = useReducer(x => x + 1, 0)
+  useLayoutEffect(() => subscribe(forceUpdate), [subscribe])
+  return cb(getState())
+}
+
+export const useDispatch = () => useStore().dispatch

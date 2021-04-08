@@ -28,7 +28,6 @@ import { connect } from '../my-react-redux'
 class Counter1 extends Component {
   increase() {}
   render() {
-    console.log(this.props)
     const { count, increase, decrease } = this.props
     return (
       <div>
