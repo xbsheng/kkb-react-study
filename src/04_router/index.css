@@ -1,0 +1,7 @@
+a {
+  margin-right: 20px;
+}
+
+a.active {
+  color: red;
+}
